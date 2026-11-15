@@ -11,11 +11,11 @@
 #define CELEBI_SPECIES         0xFBu
 #define WILD_BATTLE            0x01u
 #define BATTLETYPE_CELEBI      0x0Bu
-#define W_TEMP_ENEMY_SPECIES   0xD204u
-#define W_ENEMY_MON_DVS        0xD20Cu
-#define W_BATTLE_MODE          0xD22Du
-#define W_BATTLE_TYPE          0xD230u
-#define W_PRED_TELEMETRY       0xD2A9u
+#define W_TEMP_ENEMY_SPECIES   0xD235u
+#define W_ENEMY_MON_DVS        0xD23Du
+#define W_BATTLE_MODE          0xD25Eu
+#define W_BATTLE_TYPE          0xD261u
+#define W_PRED_TELEMETRY       0xD2DAu
 
 #define OFF_ENEMY_SPECIES      (0xD206u - W_TEMP_ENEMY_SPECIES)
 #define OFF_ENEMY_DVS          (W_ENEMY_MON_DVS - W_TEMP_ENEMY_SPECIES)
