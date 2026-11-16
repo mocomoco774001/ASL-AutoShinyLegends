@@ -6,10 +6,10 @@
 #define ASLC_WILD_BATTLE            0x01u
 #define ASLC_BATTLETYPE_CELEBI      0x0Bu
 
-#define ASLC_W_TEMP_ENEMY_SPECIES   0xD204u
-#define ASLC_W_ENEMY_MON_DVS        0xD20Cu
-#define ASLC_W_BATTLE_MODE          0xD22Du
-#define ASLC_W_BATTLE_TYPE          0xD230u
-#define ASLC_W_PRED_TELEMETRY       0xD2A9u
+#define ASLC_W_TEMP_ENEMY_SPECIES   0xD235u
+#define ASLC_W_ENEMY_MON_DVS        0xD23Du
+#define ASLC_W_BATTLE_MODE          0xD25Eu
+#define ASLC_W_BATTLE_TYPE          0xD261u
+#define ASLC_W_PRED_TELEMETRY       0xD2DAu
 
 bool asl_gen2_is_celebi_context(u8 species, u8 battle_mode, u8 battle_type);

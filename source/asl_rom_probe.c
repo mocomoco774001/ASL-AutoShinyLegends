@@ -10,7 +10,7 @@
 #define MAX_PTR_REFS 3u
 
 /* Crystal Rev 1 / VC keeps the normal ROM layout. */
-#define CRYSTAL_UPDATE_DVS_FILE_OFFSET 0x0003E9A8u
+#define CRYSTAL_UPDATE_DVS_FILE_OFFSET 0x0003E9B7u
 
 static const u8 k_title[] = { 'P','M','_','C','R','Y','S','T','A','L' };
 static const u8 k_nintendo_logo[48] = {
@@ -19,9 +19,9 @@ static const u8 k_nintendo_logo[48] = {
     0xBB,0xBB,0x67,0x63,0x6E,0x0E,0xEC,0xCC,0xDD,0xDC,0x99,0x9F,0xBB,0xB9,0x33,0x3E
 };
 
-/* 0f:69a8 LoadEnemyMon.UpdateDVs on Crystal Rev 1. */
+/* Japanese Crystal VC: LoadEnemyMon.UpdateDVs at file offset 0x3E9B7. */
 static const u8 k_update_dvs_signature[] = {
-    0x21,0x0C,0xD2, /* ld hl, wEnemyMonDVs */
+    0x21,0x3D,0xD2, /* ld hl, Japanese wEnemyMonDVs */
     0x78,           /* ld a, b */
     0x22,           /* ld [hli], a */
     0x71            /* ld [hl], c */

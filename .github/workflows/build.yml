@@ -4,11 +4,13 @@ on:
   push:
     branches:
       - main
+      - japanese-crystal-vc
     tags:
       - 'v*'
   pull_request:
     branches:
       - main
+      - japanese-crystal-vc
   workflow_dispatch:
 
 permissions:

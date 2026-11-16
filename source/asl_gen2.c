@@ -5,17 +5,18 @@
 
 #define SCAN_BEGIN             0x00100000u
 #define SCAN_END               0x40000000u
-#define SCAN_FRAME_BUDGET      (256u * 1024u)
+#define SCAN_FRAME_BUDGET      (32u * 1024u)
+#define SCAN_QUERY_BUDGET      64u
 #define CRYSTAL_ROM_SIZE       0x00200000u
 
 #define CELEBI_SPECIES         0xFBu
 #define WILD_BATTLE            0x01u
 #define BATTLETYPE_CELEBI      0x0Bu
-#define W_TEMP_ENEMY_SPECIES   0xD204u
-#define W_ENEMY_MON_DVS        0xD20Cu
-#define W_BATTLE_MODE          0xD22Du
-#define W_BATTLE_TYPE          0xD230u
-#define W_PRED_TELEMETRY       0xD2A9u
+#define W_TEMP_ENEMY_SPECIES   0xD235u
+#define W_ENEMY_MON_DVS        0xD23Du
+#define W_BATTLE_MODE          0xD25Eu
+#define W_BATTLE_TYPE          0xD261u
+#define W_PRED_TELEMETRY       0xD2DAu
 
 #define OFF_ENEMY_SPECIES      (0xD206u - W_TEMP_ENEMY_SPECIES)
 #define OFF_ENEMY_DVS          (W_ENEMY_MON_DVS - W_TEMP_ENEMY_SPECIES)
@@ -138,6 +139,7 @@ static void clear_prediction_telemetry(void)
 static bool scan_for_celebi_context(u32 rom_base)
 {
     u32 budget = SCAN_FRAME_BUDGET;
+    u32 query_budget = SCAN_QUERY_BUDGET;
 
     if (g_gen2.ignore_context_until_gone)
     {
@@ -159,7 +161,7 @@ static bool scan_for_celebi_context(u32 rom_base)
     g_gen2.context_found = false;
     g_gen2.telemetry_cleared = false;
 
-    while (budget > 0u)
+    while (budget > 0u && query_budget > 0u)
     {
         MemInfo info;
         u32 end;
@@ -170,6 +172,7 @@ static bool scan_for_celebi_context(u32 rom_base)
         u32 p;
 
         if (g_gen2.scan_cursor >= SCAN_END) g_gen2.scan_cursor = SCAN_BEGIN;
+        --query_budget;
         if (!asl_query_mapping(g_gen2.scan_cursor, &info) || info.size == 0u)
         {
             g_gen2.scan_cursor = asl_add_sat(g_gen2.scan_cursor, 0x1000u);

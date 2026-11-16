@@ -5,8 +5,9 @@
 #define PROBE_SCAN_BEGIN                    0x00100000u
 #define PROBE_SCAN_END                      0x40000000u
 #define PROBE_FRAME_BUDGET                  (256u * 1024u)
-#define CRYSTAL_UPDATE_DVS_FILE_OFFSET       0x0003E9A8u
-#define CRYSTAL_GENERATE_DVS_FILE_OFFSET     0x0003E9A0u
+#define PROBE_QUERY_BUDGET                  64u
+#define CRYSTAL_UPDATE_DVS_FILE_OFFSET       0x0003E9B7u
+#define CRYSTAL_GENERATE_DVS_FILE_OFFSET     0x0003E9AFu
 #define CRYSTAL_BANK0_SIZE                   0x00004000u
 #define GATE_CONTROL_OPERAND_OFFSET          8u
 #define GATE_CONTROL_OFFSET                  ((u32)sizeof(k_celebi_vblank_gate))
@@ -20,17 +21,17 @@ static const u8 k_nintendo_logo[48] = {
     0xBB,0xBB,0x67,0x63,0x6E,0x0E,0xEC,0xCC,0xDD,0xDC,0x99,0x9F,0xBB,0xB9,0x33,0x3E
 };
 
-/* 0f:69a8 LoadEnemyMon.UpdateDVs on Crystal Rev 1. */
+/* Japanese Crystal VC: LoadEnemyMon.UpdateDVs at file offset 0x3E9B7. */
 static const u8 k_update_dvs_signature[] = {
-    0x21,0x0C,0xD2, /* ld hl, wEnemyMonDVs */
+    0x21,0x3D,0xD2, /* ld hl, Japanese wEnemyMonDVs */
     0x78,           /* ld a, b */
     0x22,           /* ld [hli], a */
     0x71            /* ld [hl], c */
 };
 
-/* Original Crystal Rev 1 code at LoadEnemyMon.GenerateDVs (0f:69a0). */
+/* Japanese Crystal VC code at LoadEnemyMon.GenerateDVs (file offset 0x3E9AF). */
 static const u8 k_generate_dvs_original[8] = {
-    0xCD,0x9F,0x2F,0x47,0xCD,0x9F,0x2F,0x4F
+    0xCD,0x71,0x2F,0x47,0xCD,0x71,0x2F,0x4F
 };
 
 /*
@@ -39,7 +40,7 @@ static const u8 k_generate_dvs_original[8] = {
  * are base+3, base+3, base+3, base+5.
  */
 static const u8 k_celebi_vblank_gate[] = {
-    0xFA,0x30,0xD2,
+    0xFA,0x61,0xD2,
     0xFE,0x0B,
     0x20,0x40,
     0xFA,0x00,0x00,
@@ -72,11 +73,11 @@ static const u8 k_celebi_vblank_gate[] = {
     0xFE,0x2A,
     0x20,0xC9,
     0x78,
-    0xEA,0xA9,0xD2,
+    0xEA,0xDA,0xD2,
     0x3E,0x11,
     0x3D,
     0x20,0xFD,
-    0xC3,0x9F,0x2F
+    0xC3,0x71,0x2F
 };
 
 typedef struct CrystalProbe
@@ -190,9 +191,10 @@ static void probe_initialize(void)
 static void probe_step(void)
 {
     u32 budget = PROBE_FRAME_BUDGET;
+    u32 query_budget = PROBE_QUERY_BUDGET;
     if (!g_probe.started) probe_initialize();
 
-    while (!g_probe.scan_done && budget > 0u)
+    while (!g_probe.scan_done && budget > 0u && query_budget > 0u)
     {
         MemInfo info;
         u32 end;
@@ -206,6 +208,7 @@ static void probe_step(void)
             g_probe.scan_done = true;
             break;
         }
+        --query_budget;
         if (!asl_query_mapping(g_probe.scan_cursor, &info) || info.size == 0u)
         {
             g_probe.scan_cursor = asl_add_sat(g_probe.scan_cursor, 0x1000u);
