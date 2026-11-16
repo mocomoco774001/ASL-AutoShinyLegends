@@ -5,6 +5,7 @@
 #define PROBE_SCAN_BEGIN                    0x00100000u
 #define PROBE_SCAN_END                      0x40000000u
 #define PROBE_FRAME_BUDGET                  (256u * 1024u)
+#define PROBE_QUERY_BUDGET                  64u
 #define CRYSTAL_UPDATE_DVS_FILE_OFFSET       0x0003E9B7u
 #define CRYSTAL_GENERATE_DVS_FILE_OFFSET     0x0003E9AFu
 #define CRYSTAL_BANK0_SIZE                   0x00004000u
@@ -190,9 +191,10 @@ static void probe_initialize(void)
 static void probe_step(void)
 {
     u32 budget = PROBE_FRAME_BUDGET;
+    u32 query_budget = PROBE_QUERY_BUDGET;
     if (!g_probe.started) probe_initialize();
 
-    while (!g_probe.scan_done && budget > 0u)
+    while (!g_probe.scan_done && budget > 0u && query_budget > 0u)
     {
         MemInfo info;
         u32 end;
@@ -206,6 +208,7 @@ static void probe_step(void)
             g_probe.scan_done = true;
             break;
         }
+        --query_budget;
         if (!asl_query_mapping(g_probe.scan_cursor, &info) || info.size == 0u)
         {
             g_probe.scan_cursor = asl_add_sat(g_probe.scan_cursor, 0x1000u);
